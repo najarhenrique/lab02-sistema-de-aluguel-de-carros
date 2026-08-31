@@ -1,0 +1,36 @@
+@startuml diagrama-pacotes
+skinparam packageStyle rect
+
+package "aluguelcarros" {
+
+  package "controller" as controller {
+  }
+
+  package "service" as service {
+  }
+
+  package "model" as model {
+  }
+
+  package "repository" as repository {
+  }
+
+  package "view (templates/static)" as view {
+  }
+
+}
+
+note right of controller: Intercepta requisições HTTP e gerencia o fluxo de telas
+note right of service: Regras de negócio, validações de limites e contratos
+note right of model: Entidades de domínio (Cliente, Pedido, Automovel, etc.)
+note right of repository: Camada de persistência de dados
+note right of view: Interface gráfica (HTML5/CSS3)
+
+view ..> controller : envia formulários
+controller ..> service : delega regras
+controller ..> model : manipula dados
+service ..> repository : persiste/busca
+service ..> model : valida entidades
+repository ..> model : lê/grava
+
+@enduml

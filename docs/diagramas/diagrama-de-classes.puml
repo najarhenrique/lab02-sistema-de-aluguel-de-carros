@@ -1,0 +1,107 @@
+@startuml diagrama-de-classes-lab02
+skinparam classAttributeIconSize 0
+
+abstract class Usuario {
+  - id: String
+  - nome: String
+  - email: String
+  - senha: String
+  + autenticar(senha: String): boolean
+}
+
+class Cliente {
+  - rg: String
+  - cpf: String
+  - endereco: String
+  - profissao: String
+  + criarPedido(automovel: Automovel, modalidade: ModalidadeContrato): PedidoAluguel
+  + alterarPedido(pedido: PedidoAluguel): void
+  + cancelarPedido(pedido: PedidoAluguel): void
+  + aceitarContrato(contrato: Contrato): void
+}
+
+class RendimentoEmpregadora {
+  - nomeEmpregadora: String
+  - rendimento: double
+}
+
+abstract class Agente {
+  - cnpj: String
+  - razaoSocial: String
+  + avaliarPedido(pedido: PedidoAluguel, aprovado: boolean, parecer: String): ParecerFinanceiro
+}
+
+class Empresa {
+}
+
+class Banco {
+  + concederCreditoLeasing(pedido: PedidoAluguel): ContratoCredito
+}
+
+class Automovel {
+  - placa: String
+  - ano: int
+  - marca: String
+  - modelo: String
+  - proprietario: Usuario
+}
+
+enum ModalidadeContrato {
+  LOCACAO
+  ASSINATURA
+  LEASING
+}
+
+enum StatusPedido {
+  PENDENTE
+  AVALIADO_APROVADO
+  AVALIADO_REPROVADO
+  CANCELADO
+  EM_EXECUCAO
+}
+
+class PedidoAluguel {
+  - id: String
+  - dataPedido: Date
+  - status: StatusPedido
+  - modalidade: ModalidadeContrato
+}
+
+class ParecerFinanceiro {
+  - id: String
+  - aprovado: boolean
+  - parecer: String
+  - dataAvaliacao: Date
+}
+
+class Contrato {
+  - id: String
+  - valorMensal: double
+  - dataInicio: Date
+  - dataFim: Date
+  - assinadoCliente: boolean
+}
+
+class ContratoCredito {
+  - id: String
+  - valorFinanciado: double
+  - taxaJuros: double
+}
+
+Usuario <|-- Cliente
+Usuario <|-- Agente
+Agente <|-- Empresa
+Agente <|-- Banco
+
+Cliente "1" *-- "0..3" RendimentoEmpregadora
+Cliente "1" -- "0..*" PedidoAluguel : solicita >
+Agente "1" -- "0..*" ParecerFinanceiro : emite >
+
+PedidoAluguel "1" -- "1" Automovel
+PedidoAluguel "1" -- "0..1" ParecerFinanceiro
+PedidoAluguel "1" -- "0..1" Contrato
+
+Contrato "0..1" -- "0..1" ContratoCredito : associado (Leasing) >
+Banco "1" -- "0..*" ContratoCredito : emite >
+
+@endstartuml
