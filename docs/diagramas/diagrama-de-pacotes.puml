@@ -1,36 +1,47 @@
 @startuml diagrama-pacotes
+allowmixing
 skinparam packageStyle rect
 
 package "aluguelcarros" {
 
-  package "controller" as controller {
+  package "Gestão de Pedidos e Contratos" as gestao {
+    package "controller" as gestao_controller {}
+    package "service" as gestao_service {}
+    package "model" as gestao_model {}
+    package "repository" as gestao_repository {}
   }
 
-  package "service" as service {
+  package "Construção Dinâmica de Páginas Web" as web {
+    package "templates/static" as web_templates {}
+    package "render" as web_render {}
   }
 
-  package "model" as model {
-  }
-
-  package "repository" as repository {
-  }
-
-  package "view (templates/static)" as view {
+  package "Infraestrutura" as infra {
+    artifact "Servidor Central" as servidor
+    artifact "Clientes / Agentes" as clientes
   }
 
 }
 
-note right of controller: Intercepta requisições HTTP e gerencia o fluxo de telas
-note right of service: Regras de negócio, validações de limites e contratos
-note right of model: Entidades de domínio (Cliente, Pedido, Automovel, etc.)
-note right of repository: Camada de persistência de dados
-note right of view: Interface gráfica (HTML5/CSS3)
+note right of gestao
+  Sub-sistema responsável por pedidos, contratos
+  e comunicação com agentes (avaliação financeira, leasing).
+end note
 
-view ..> controller : envia formulários
-controller ..> service : delega regras
-controller ..> model : manipula dados
-service ..> repository : persiste/busca
-service ..> model : valida entidades
-repository ..> model : lê/grava
+note right of web
+  Geração dinâmica de páginas, templates e assets estáticos.
+end note
+
+note right of infra
+  Servidor central expõe API/HTTP; clientes e agentes acessam via Internet.
+end note
+
+web_templates ..> gestao_controller : envia formulários
+gestao_controller ..> gestao_service : delega regras
+gestao_service ..> gestao_repository : persiste/busca
+gestao_service ..> gestao_model : valida entidades
+gestao_repository ..> gestao_model : lê/grava
+
+servidor ..> clientes : comunica-se via Internet
 
 @enduml
