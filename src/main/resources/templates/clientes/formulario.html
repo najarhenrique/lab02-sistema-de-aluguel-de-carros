@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Cliente</title></head>
+<body>
+<h1 th:text="${cliente.id == null ? 'Novo cliente' : 'Editar cliente'}"></h1>
+<form th:object="${cliente}" th:action="${cliente.id == null ? '/clientes' : '/clientes/' + cliente.id}" method="post">
+    <input type="hidden" name="_method" value="put" th:if="${cliente.id != null}">
+    <label>Nome <input th:field="*{nome}"></label><span th:errors="*{nome}"></span><br>
+    <label>E-mail <input type="email" th:field="*{email}"></label><span th:errors="*{email}"></span><br>
+    <label>Senha <input type="password" th:field="*{senha}"></label><span th:errors="*{senha}"></span><br>
+    <label>RG <input th:field="*{rg}"></label><span th:errors="*{rg}"></span><br>
+    <label>CPF <input th:field="*{cpf}"></label><span th:errors="*{cpf}"></span><br>
+    <label>Endereco <input th:field="*{endereco}"></label><span th:errors="*{endereco}"></span><br>
+    <label>Profissao <input th:field="*{profissao}"></label><br>
+    <fieldset><legend>Rendimentos (ate 3)</legend>
+        <div th:each="rendimento, status : *{rendimentos}">
+            <label>Empregadora <input th:field="*{rendimentos[__${status.index}__].nomeEmpregadora}"></label>
+            <label>Rendimento <input type="number" step="0.01" min="0" th:field="*{rendimentos[__${status.index}__].rendimento}"></label>
+        </div>
+    </fieldset>
+    <button type="submit">Salvar</button>
+    <a th:href="@{/clientes}">Cancelar</a>
+</form>
+</body>
+</html>

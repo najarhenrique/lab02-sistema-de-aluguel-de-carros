@@ -24,3 +24,8 @@ hs_err_pid*
 replay_pid*
 .DS_Store
 **/.DS_Store
+target/
+data/*.mv.db
+data/*.trace.db
+.vscode/
+data/
