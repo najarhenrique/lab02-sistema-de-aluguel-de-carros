@@ -11,6 +11,8 @@ Como **Cliente**, quero me cadastrar no sistema informando meus dados pessoais, 
 - O sistema deve permitir o cadastro de até 3 entidades empregadoras com os respectivos rendimentos auferidos.
 - O cadastro só é efetivado se o CPF for válido e não estiver duplicado no sistema.
 
+**Observação:** o cadastro é pré-requisito para uso do sistema; operações sobre pedidos exigem que o usuário esteja autenticado (login/sessão ativa).
+
 ---
 
 ## US02 – Gestão de Pedidos de Aluguel (UC02, UC03, UC04, UC05)
@@ -21,6 +23,7 @@ Como **Cliente**, quero criar, consultar, alterar e cancelar meus pedidos de alu
 - O pedido deve conter a escolha do automóvel (placa, ano, marca, modelo) e a modalidade de contrato (Locação, Assinatura ou Leasing).
 - A alteração e o cancelamento do pedido só são permitidos enquanto o pedido estiver com o status `PENDENTE` (antes do parecer do agente).
 - O cliente só pode visualizar e manipular os seus próprios pedidos.
+- O sistema deve registrar o **proprietário** do automóvel associado ao pedido (Cliente, Empresa ou Banco). A propriedade pode variar conforme a `ModalidadeContrato` (por exemplo, em Leasing o banco pode permanecer proprietário até quitação).
 
 ---
 
@@ -33,6 +36,8 @@ Como **Agente** (Empresa ou Banco), quero analisar financeiramente os pedidos de
 - O parecer deve registrar obrigatoriamente o resultado (Aprovado/Reprovado), uma justificativa/texto de parecer e a data da avaliação.
 - Após o registro do parecer positivo, o pedido muda o status para `AVALIADO_APROVADO`.
 
+-- Em caso de modalidade `LEASING`, o agente deverá indicar se há necessidade de um `ContratoCredito` vinculado, e esse vínculo deve ficar registrado no pedido/contrato.
+
 ---
 
 ## US04 – Formalização e Execução do Contrato (UC07)
@@ -44,6 +49,8 @@ Como **Cliente**, quero visualizar o parecer positivo do meu pedido e decidir se
 - Se o cliente aceitar, o contrato passa para o status `EM_EXECUCAO`.
 - Caso o cliente recuse, o pedido é marcado como `CANCELADO`.
 
+**Observação:** o estado `EM_EXECUCAO` aplica-se ao `Contrato` (não apenas ao `Pedido`): a aceitação pelo cliente transforma o rascunho/proposta em contrato em execução.
+
 ---
 
 ## US05 – Concessão de Crédito em Contratos de Leasing (UC08)
@@ -54,3 +61,5 @@ Como **Banco**, quero emitir e associar um contrato de crédito a um pedido na m
 - Apenas agentes do tipo **Banco** podem conceder crédito para a modalidade Leasing.
 - O contrato de crédito deve estar obrigatoriamente vinculado ao pedido de aluguel e ao contrato correspondente.
 - Deve conter informações sobre o valor financiado e as taxas de juros acordadas.
+
+**Critério adicional:** o sistema deve impedir a criação de um `ContratoCredito` por agentes não-banco, e deve vincular explicitamente `ContratoCredito` → `PedidoAluguel` → `Contrato`.

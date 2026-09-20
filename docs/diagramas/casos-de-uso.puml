@@ -10,17 +10,19 @@ agente <|-- banco
 agente <|-- empresa
 
 rectangle "Sistema de Aluguel de Carros" {
+  usecase "UC00 - Autenticar / Login" as UC0
   usecase "UC01 - Cadastrar no Sistema" as UC1
   usecase "UC02 - Criar Pedido de Aluguel" as UC2
   usecase "UC03 - Alterar Pedido de Aluguel" as UC3
   usecase "UC04 - Consultar Pedido de Aluguel" as UC4
   usecase "UC05 - Cancelar Pedido de Aluguel" as UC5
   usecase "UC06 - Avaliar Pedido (Emitir Parecer)" as UC6
-  usecase "UC07 - Avançar para Execução do Contrato" as UC7
+  usecase "UC07 - Decidir Aceitar/Recusar Contrato" as UC7
   usecase "UC08 - Conceder Crédito (Leasing)" as UC8
 }
 
 cliente --> UC1
+cliente --> UC0
 cliente --> UC2
 cliente --> UC3
 cliente --> UC4
@@ -29,4 +31,6 @@ cliente --> UC7
 
 agente --> UC6
 banco --> UC8
+UC6 ..> UC7 : informa resultado
+
 @enduml

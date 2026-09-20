@@ -57,7 +57,6 @@ enum StatusPedido {
   AVALIADO_APROVADO
   AVALIADO_REPROVADO
   CANCELADO
-  EM_EXECUCAO
 }
 
 class PedidoAluguel {
@@ -80,6 +79,7 @@ class Contrato {
   - dataInicio: Date
   - dataFim: Date
   - assinadoCliente: boolean
+  - status: StatusContrato
 }
 
 class ContratoCredito {
@@ -104,4 +104,11 @@ PedidoAluguel "1" -- "0..1" Contrato
 Contrato "0..1" -- "0..1" ContratoCredito : associado (Leasing) >
 Banco "1" -- "0..*" ContratoCredito : emite >
 
-@endstartuml
+enum StatusContrato {
+  RASCUNHO
+  EM_EXECUCAO
+  ENCERRADO
+}
+
+
+@enduml
