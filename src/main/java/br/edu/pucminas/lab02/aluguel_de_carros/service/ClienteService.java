@@ -32,7 +32,6 @@ public class ClienteService {
     @Transactional
     public Cliente salvar(ClienteCreateRequest dados) {
         String cpf = normalizarCpf(dados.cpf());
-        validarCpf(cpf);
         if (repository.existsByCpf(cpf)) {
             throw new CpfDuplicadoException();
         }
@@ -92,23 +91,7 @@ public class ClienteService {
     }
 
     private String normalizarCpf(String cpf) {
-        return cpf == null ? null : cpf.replaceAll("\\D", "");
-    }
-
-    private void validarCpf(String cpf) {
-        if (cpf == null || cpf.length() != 11 || cpf.chars().distinct().count() == 1
-                || !validarDigito(cpf, 9) || !validarDigito(cpf, 10)) {
-            throw new CpfInvalidoException();
-        }
-    }
-
-    private boolean validarDigito(String cpf, int posicao) {
-        int soma = 0;
-        for (int indice = 0; indice < posicao; indice++) {
-            soma += (cpf.charAt(indice) - '0') * (posicao + 1 - indice);
-        }
-        int digito = (soma * 10) % 11;
-        return digito == 10 ? cpf.charAt(posicao) == '0' : cpf.charAt(posicao) - '0' == digito;
+        return cpf == null ? null : cpf.replaceAll("[.\\-\\s]", "");
     }
 
     public static class ClienteNotFoundException extends RuntimeException {
@@ -117,10 +100,6 @@ public class ClienteService {
 
     public static class CpfDuplicadoException extends RuntimeException {
         public CpfDuplicadoException() { super("CPF ja cadastrado"); }
-    }
-
-    public static class CpfInvalidoException extends RuntimeException {
-        public CpfInvalidoException() { super("CPF invalido"); }
     }
 
     public static class EmailDuplicadoException extends RuntimeException {

@@ -8,7 +8,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ public class Cliente extends Usuario {
     private String rg;
 
     @NotBlank(message = "CPF e obrigatorio")
-    @Pattern(regexp = "[0-9.\\- ]+", message = "CPF deve conter apenas numeros")
     private String cpf;
 
     @NotBlank(message = "Endereco e obrigatorio")

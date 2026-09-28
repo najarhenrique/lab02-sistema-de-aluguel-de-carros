@@ -25,11 +25,10 @@ public class ApiExceptionHandler {
         return new ErroResponse("Dados invalidos", campos);
     }
 
-    @ExceptionHandler({ClienteService.CpfInvalidoException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErroResponse requisicaoInvalida(Exception exception) {
-        return new ErroResponse(exception instanceof HttpMessageNotReadableException
-                ? "Corpo da requisicao invalido" : exception.getMessage());
+    public ErroResponse requisicaoInvalida() {
+        return new ErroResponse("Corpo da requisicao invalido");
     }
 
     @ExceptionHandler({ClienteService.CpfDuplicadoException.class, ClienteService.EmailDuplicadoException.class})
