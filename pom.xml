@@ -15,7 +15,7 @@
     <artifactId>aluguel-de-carros</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>aluguel-de-carros</name>
-    <description>CRUD de clientes do sistema de aluguel de carros</description>
+    <description>API REST do sistema de aluguel de carros</description>
 
     <properties>
         <java.version>17</java.version>
@@ -25,10 +25,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

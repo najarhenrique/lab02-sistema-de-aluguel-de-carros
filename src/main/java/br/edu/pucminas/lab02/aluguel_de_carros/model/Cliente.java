@@ -3,11 +3,11 @@ package br.edu.pucminas.lab02.aluguel_de_carros.model;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,6 @@ public class Cliente extends Usuario {
     private String rg;
 
     @NotBlank(message = "CPF e obrigatorio")
-    @Pattern(regexp = "[0-9.\\- ]+", message = "CPF deve conter apenas numeros")
     private String cpf;
 
     @NotBlank(message = "Endereco e obrigatorio")
@@ -30,7 +29,7 @@ public class Cliente extends Usuario {
 
     @Valid
     @Size(max = 3, message = "Informe no maximo 3 empregadoras")
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "rendimentos_empregadoras", joinColumns = @JoinColumn(name = "cliente_id"))
     private List<RendimentoEmpregadora> rendimentos = new ArrayList<>();
 
