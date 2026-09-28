@@ -6,6 +6,7 @@ import br.edu.pucminas.lab02.aluguel_de_carros.dto.RendimentoUpdateRequest;
 import br.edu.pucminas.lab02.aluguel_de_carros.model.Cliente;
 import br.edu.pucminas.lab02.aluguel_de_carros.model.RendimentoEmpregadora;
 import br.edu.pucminas.lab02.aluguel_de_carros.repository.ClienteRepository;
+import br.edu.pucminas.lab02.aluguel_de_carros.repository.PedidoAluguelRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClienteService {
 
     private final ClienteRepository repository;
+    private final PedidoAluguelRepository pedidoRepository;
 
-    public ClienteService(ClienteRepository repository) {
+    public ClienteService(ClienteRepository repository, PedidoAluguelRepository pedidoRepository) {
         this.repository = repository;
+        this.pedidoRepository = pedidoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +62,9 @@ public class ClienteService {
 
     @Transactional
     public void excluir(String id) {
-        repository.delete(buscarEntidade(id));
+        Cliente cliente = buscarEntidade(id);
+        pedidoRepository.deleteByClienteId(id);
+        repository.delete(cliente);
     }
 
     @Transactional(readOnly = true)

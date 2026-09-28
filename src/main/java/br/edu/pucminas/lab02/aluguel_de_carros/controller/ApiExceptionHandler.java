@@ -2,11 +2,13 @@ package br.edu.pucminas.lab02.aluguel_de_carros.controller;
 
 import br.edu.pucminas.lab02.aluguel_de_carros.dto.ErroResponse;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.ClienteService;
+import br.edu.pucminas.lab02.aluguel_de_carros.service.PedidoAluguelService;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,13 +38,14 @@ public class ApiExceptionHandler {
         return new ErroResponse(exception.getMessage());
     }
 
-    @ExceptionHandler(ClienteService.CredenciaisInvalidasException.class)
+    @ExceptionHandler({ClienteService.CredenciaisInvalidasException.class, MissingRequestHeaderException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErroResponse naoAutenticado(RuntimeException exception) {
-        return new ErroResponse(exception.getMessage());
+    public ErroResponse naoAutenticado(Exception exception) {
+        return new ErroResponse(exception instanceof MissingRequestHeaderException
+                ? "Usuario nao autenticado" : exception.getMessage());
     }
 
-    @ExceptionHandler(ClienteService.ClienteNotFoundException.class)
+    @ExceptionHandler({ClienteService.ClienteNotFoundException.class, PedidoAluguelService.PedidoNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErroResponse naoEncontrado(RuntimeException exception) {
         return new ErroResponse(exception.getMessage());
