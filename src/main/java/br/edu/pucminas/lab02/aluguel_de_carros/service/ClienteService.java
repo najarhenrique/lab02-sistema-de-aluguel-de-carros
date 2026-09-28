@@ -62,6 +62,13 @@ public class ClienteService {
         repository.delete(buscarEntidade(id));
     }
 
+    @Transactional(readOnly = true)
+    public Cliente autenticar(String email, String senha) {
+        return repository.findByEmail(email)
+                .filter(cliente -> cliente.getSenha().equals(senha))
+                .orElseThrow(CredenciaisInvalidasException::new);
+    }
+
     private Cliente buscarEntidade(String id) {
         return repository.findById(id).orElseThrow(() -> new ClienteNotFoundException(id));
     }
@@ -113,5 +120,9 @@ public class ClienteService {
 
     public static class EmailDuplicadoException extends RuntimeException {
         public EmailDuplicadoException() { super("E-mail ja cadastrado"); }
+    }
+
+    public static class CredenciaisInvalidasException extends RuntimeException {
+        public CredenciaisInvalidasException() { super("E-mail ou senha invalidos"); }
     }
 }

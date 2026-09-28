@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ClienteRepository extends JpaRepository<Cliente, String> {
     Optional<Cliente> findByCpf(String cpf);
+    Optional<Cliente> findByEmail(String email);
     boolean existsByCpf(String cpf);
     boolean existsByEmail(String email);
     boolean existsByCpfAndIdNot(String cpf, String id);

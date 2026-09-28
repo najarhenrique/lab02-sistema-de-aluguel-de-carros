@@ -36,6 +36,12 @@ public class ApiExceptionHandler {
         return new ErroResponse(exception.getMessage());
     }
 
+    @ExceptionHandler(ClienteService.CredenciaisInvalidasException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErroResponse naoAutenticado(RuntimeException exception) {
+        return new ErroResponse(exception.getMessage());
+    }
+
     @ExceptionHandler(ClienteService.ClienteNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErroResponse naoEncontrado(RuntimeException exception) {
