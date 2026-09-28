@@ -3,6 +3,7 @@ package br.edu.pucminas.lab02.aluguel_de_carros.model;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class Cliente extends Usuario {
 
     @Valid
     @Size(max = 3, message = "Informe no maximo 3 empregadoras")
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "rendimentos_empregadoras", joinColumns = @JoinColumn(name = "cliente_id"))
     private List<RendimentoEmpregadora> rendimentos = new ArrayList<>();
 
