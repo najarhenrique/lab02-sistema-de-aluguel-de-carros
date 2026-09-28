@@ -3,14 +3,21 @@ package br.edu.pucminas.lab02.aluguel_de_carros.service;
 import br.edu.pucminas.lab02.aluguel_de_carros.dto.PedidoCreateRequest;
 import br.edu.pucminas.lab02.aluguel_de_carros.model.Automovel;
 import br.edu.pucminas.lab02.aluguel_de_carros.model.PedidoAluguel;
+import br.edu.pucminas.lab02.aluguel_de_carros.model.StatusPedido;
 import br.edu.pucminas.lab02.aluguel_de_carros.repository.AutomovelRepository;
 import br.edu.pucminas.lab02.aluguel_de_carros.repository.PedidoAluguelRepository;
+import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PedidoAluguelService {
+
+    private static final String FORMATO_PLACA = "[A-Z]{3}[0-9][A-Z0-9][0-9]{2}";
+    private static final List<StatusPedido> STATUS_EM_ANDAMENTO =
+            List.of(StatusPedido.PENDENTE, StatusPedido.AVALIADO_APROVADO);
 
     private final PedidoAluguelRepository repository;
     private final AutomovelRepository automovelRepository;
@@ -43,18 +50,49 @@ public class PedidoAluguelService {
     }
 
     private Automovel buscarOuCriarAutomovel(PedidoCreateRequest dados) {
-        String placa = dados.placa().trim().toUpperCase();
-        return automovelRepository.findByPlaca(placa).orElseGet(() -> {
-            Automovel automovel = new Automovel();
-            automovel.setPlaca(placa);
-            automovel.setAno(dados.ano());
-            automovel.setMarca(dados.marca());
-            automovel.setModelo(dados.modelo());
-            return automovelRepository.save(automovel);
-        });
+        String placa = dados.placa().replaceAll("[-\\s]", "").toUpperCase();
+        if (!placa.matches(FORMATO_PLACA)) {
+            throw new PedidoInvalidoException("Placa invalida. Use o formato ABC1234 ou ABC1D23");
+        }
+        int anoMaximo = Year.now().getValue() + 1;
+        if (dados.ano() > anoMaximo) {
+            throw new PedidoInvalidoException("Ano do automovel nao pode ser maior que " + anoMaximo);
+        }
+
+        Optional<Automovel> existente = automovelRepository.findByPlaca(placa);
+        if (existente.isPresent()) {
+            Automovel automovel = existente.get();
+            if (automovel.getAno() != dados.ano()
+                    || !automovel.getMarca().equalsIgnoreCase(dados.marca().trim())
+                    || !automovel.getModelo().equalsIgnoreCase(dados.modelo().trim())) {
+                throw new PedidoInvalidoException("Placa " + placa + " ja cadastrada para "
+                        + automovel.getMarca() + " " + automovel.getModelo() + " " + automovel.getAno());
+            }
+            if (repository.existsByAutomovelIdAndStatusIn(automovel.getId(), STATUS_EM_ANDAMENTO)) {
+                throw new AutomovelIndisponivelException(placa);
+            }
+            return automovel;
+        }
+
+        Automovel automovel = new Automovel();
+        automovel.setPlaca(placa);
+        automovel.setAno(dados.ano());
+        automovel.setMarca(dados.marca().trim());
+        automovel.setModelo(dados.modelo().trim());
+        return automovelRepository.save(automovel);
     }
 
     public static class PedidoNotFoundException extends RuntimeException {
         public PedidoNotFoundException(String id) { super("Pedido nao encontrado: " + id); }
+    }
+
+    public static class PedidoInvalidoException extends RuntimeException {
+        public PedidoInvalidoException(String mensagem) { super(mensagem); }
+    }
+
+    public static class AutomovelIndisponivelException extends RuntimeException {
+        public AutomovelIndisponivelException(String placa) {
+            super("Automovel " + placa + " ja possui um pedido em andamento");
+        }
     }
 }

@@ -9,8 +9,9 @@ public record PedidoCreateRequest(
     @NotBlank(message = "Placa e obrigatoria")
     String placa,
 
-    @Min(value = 1900, message = "Ano invalido")
-    int ano,
+    @NotNull(message = "Ano e obrigatorio")
+    @Min(value = 1900, message = "Ano deve ser a partir de 1900")
+    Integer ano,
 
     @NotBlank(message = "Marca e obrigatoria")
     String marca,

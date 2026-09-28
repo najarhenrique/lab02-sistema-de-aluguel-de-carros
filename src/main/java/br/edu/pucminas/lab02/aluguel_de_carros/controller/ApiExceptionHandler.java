@@ -31,7 +31,14 @@ public class ApiExceptionHandler {
         return new ErroResponse("Corpo da requisicao invalido");
     }
 
-    @ExceptionHandler({ClienteService.CpfDuplicadoException.class, ClienteService.EmailDuplicadoException.class})
+    @ExceptionHandler(PedidoAluguelService.PedidoInvalidoException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErroResponse pedidoInvalido(RuntimeException exception) {
+        return new ErroResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler({ClienteService.CpfDuplicadoException.class, ClienteService.EmailDuplicadoException.class,
+            PedidoAluguelService.AutomovelIndisponivelException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErroResponse conflito(RuntimeException exception) {
         return new ErroResponse(exception.getMessage());
