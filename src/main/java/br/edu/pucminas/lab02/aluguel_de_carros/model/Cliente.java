@@ -33,6 +33,9 @@ public class Cliente extends Usuario {
     @CollectionTable(name = "rendimentos_empregadoras", joinColumns = @JoinColumn(name = "cliente_id"))
     private List<RendimentoEmpregadora> rendimentos = new ArrayList<>();
 
+    @Override
+    public TipoUsuario getTipo() { return TipoUsuario.CLIENTE; }
+
     public String getRg() { return rg; }
     public void setRg(String rg) { this.rg = rg; }
     public String getCpf() { return cpf; }
