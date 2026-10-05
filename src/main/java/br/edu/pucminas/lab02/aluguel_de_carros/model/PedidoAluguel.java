@@ -1,5 +1,6 @@
 package br.edu.pucminas.lab02.aluguel_de_carros.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -7,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -32,6 +34,12 @@ public class PedidoAluguel {
     @ManyToOne(optional = false)
     private Automovel automovel;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private ParecerFinanceiro parecer;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Contrato contrato;
+
     public String getId() { return id; }
     public LocalDateTime getDataPedido() { return dataPedido; }
     public StatusPedido getStatus() { return status; }
@@ -42,4 +50,8 @@ public class PedidoAluguel {
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
     public Automovel getAutomovel() { return automovel; }
     public void setAutomovel(Automovel automovel) { this.automovel = automovel; }
+    public ParecerFinanceiro getParecer() { return parecer; }
+    public void setParecer(ParecerFinanceiro parecer) { this.parecer = parecer; }
+    public Contrato getContrato() { return contrato; }
+    public void setContrato(Contrato contrato) { this.contrato = contrato; }
 }
