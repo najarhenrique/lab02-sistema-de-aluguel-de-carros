@@ -2,6 +2,7 @@ package br.edu.pucminas.lab02.aluguel_de_carros.controller;
 
 import br.edu.pucminas.lab02.aluguel_de_carros.dto.ErroResponse;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.AutenticacaoService;
+import br.edu.pucminas.lab02.aluguel_de_carros.service.AvaliacaoService;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.ClienteService;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.PedidoAluguelService;
 import java.util.LinkedHashMap;
@@ -46,11 +47,18 @@ public class ApiExceptionHandler {
         return new ErroResponse(exception.getMessage());
     }
 
-    @ExceptionHandler({AutenticacaoService.CredenciaisInvalidasException.class, MissingRequestHeaderException.class})
+    @ExceptionHandler({AutenticacaoService.CredenciaisInvalidasException.class,
+            AvaliacaoService.AgenteNaoAutenticadoException.class, MissingRequestHeaderException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErroResponse naoAutenticado(Exception exception) {
         return new ErroResponse(exception instanceof MissingRequestHeaderException
                 ? "Usuario nao autenticado" : exception.getMessage());
+    }
+
+    @ExceptionHandler(AvaliacaoService.AcessoNegadoException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErroResponse acessoNegado(RuntimeException exception) {
+        return new ErroResponse(exception.getMessage());
     }
 
     @ExceptionHandler({ClienteService.ClienteNotFoundException.class, PedidoAluguelService.PedidoNotFoundException.class})
