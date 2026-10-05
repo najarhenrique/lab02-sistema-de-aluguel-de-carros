@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { api } from '../api.js'
 
-export default function Login({ onLogin, onCadastrar }) {
+export default function Login({ onLogin, onCadastrar, onCadastrarAgente }) {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
@@ -23,7 +23,8 @@ export default function Login({ onLogin, onCadastrar }) {
       <label>Senha<input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required /></label>
       {erro && <p className="erro">{erro}</p>}
       <button type="submit">Entrar</button>
-      <button type="button" className="link" onClick={onCadastrar}>Não tem conta? Cadastre-se</button>
+      <button type="button" className="link" onClick={onCadastrar}>Sou cliente: cadastre-se</button>
+      <button type="button" className="link" onClick={onCadastrarAgente}>Sou empresa ou banco: cadastre-se</button>
     </form>
   )
 }

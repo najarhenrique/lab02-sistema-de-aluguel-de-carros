@@ -20,5 +20,8 @@ public record PedidoCreateRequest(
     String modelo,
 
     @NotNull(message = "Modalidade e obrigatoria")
-    ModalidadeContrato modalidade
+    ModalidadeContrato modalidade,
+
+    @NotBlank(message = "Proprietario do automovel e obrigatorio")
+    String proprietarioId
 ) {}

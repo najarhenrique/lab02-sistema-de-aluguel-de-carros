@@ -9,7 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PedidoAluguelRepository extends JpaRepository<PedidoAluguel, String> {
     List<PedidoAluguel> findByClienteIdOrderByDataPedidoDesc(String clienteId);
+    List<PedidoAluguel> findAllByOrderByDataPedidoDesc();
+    List<PedidoAluguel> findByStatusOrderByDataPedidoDesc(StatusPedido status);
     Optional<PedidoAluguel> findByIdAndClienteId(String id, String clienteId);
     void deleteByClienteId(String clienteId);
     boolean existsByAutomovelIdAndStatusIn(String automovelId, Collection<StatusPedido> status);
+    boolean existsByAutomovelIdAndStatusInAndIdNot(String automovelId, Collection<StatusPedido> status, String id);
 }

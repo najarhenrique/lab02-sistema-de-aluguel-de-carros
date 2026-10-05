@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,5 +41,26 @@ public class PedidoAluguelController {
                                                 @Valid @RequestBody PedidoCreateRequest request) {
         PedidoResponse pedido = PedidoResponse.from(service.criar(clienteId, request));
         return ResponseEntity.created(URI.create("/api/pedidos/" + pedido.id())).body(pedido);
+    }
+
+    @PutMapping("/{id}")
+    public PedidoResponse alterar(@RequestHeader(CLIENTE_HEADER) String clienteId, @PathVariable String id,
+                                  @Valid @RequestBody PedidoCreateRequest request) {
+        return PedidoResponse.from(service.alterar(id, clienteId, request));
+    }
+
+    @PostMapping("/{id}/cancelar")
+    public PedidoResponse cancelar(@RequestHeader(CLIENTE_HEADER) String clienteId, @PathVariable String id) {
+        return PedidoResponse.from(service.cancelar(id, clienteId));
+    }
+
+    @PostMapping("/{id}/contrato/aceitar")
+    public PedidoResponse aceitarContrato(@RequestHeader(CLIENTE_HEADER) String clienteId, @PathVariable String id) {
+        return PedidoResponse.from(service.aceitarContrato(id, clienteId));
+    }
+
+    @PostMapping("/{id}/contrato/recusar")
+    public PedidoResponse recusarContrato(@RequestHeader(CLIENTE_HEADER) String clienteId, @PathVariable String id) {
+        return PedidoResponse.from(service.recusarContrato(id, clienteId));
     }
 }

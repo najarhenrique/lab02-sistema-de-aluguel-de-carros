@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,6 +23,9 @@ public class Automovel {
     private String marca;
     private String modelo;
 
+    @ManyToOne
+    private Usuario proprietario;
+
     public String getId() { return id; }
     public String getPlaca() { return placa; }
     public void setPlaca(String placa) { this.placa = placa; }
@@ -31,4 +35,6 @@ public class Automovel {
     public void setMarca(String marca) { this.marca = marca; }
     public String getModelo() { return modelo; }
     public void setModelo(String modelo) { this.modelo = modelo; }
+    public Usuario getProprietario() { return proprietario; }
+    public void setProprietario(Usuario proprietario) { this.proprietario = proprietario; }
 }

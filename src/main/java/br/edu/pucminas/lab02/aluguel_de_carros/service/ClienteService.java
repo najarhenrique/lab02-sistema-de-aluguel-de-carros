@@ -7,6 +7,7 @@ import br.edu.pucminas.lab02.aluguel_de_carros.model.Cliente;
 import br.edu.pucminas.lab02.aluguel_de_carros.model.RendimentoEmpregadora;
 import br.edu.pucminas.lab02.aluguel_de_carros.repository.ClienteRepository;
 import br.edu.pucminas.lab02.aluguel_de_carros.repository.PedidoAluguelRepository;
+import br.edu.pucminas.lab02.aluguel_de_carros.repository.UsuarioRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,13 @@ public class ClienteService {
 
     private final ClienteRepository repository;
     private final PedidoAluguelRepository pedidoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public ClienteService(ClienteRepository repository, PedidoAluguelRepository pedidoRepository) {
+    public ClienteService(ClienteRepository repository, PedidoAluguelRepository pedidoRepository,
+                          UsuarioRepository usuarioRepository) {
         this.repository = repository;
         this.pedidoRepository = pedidoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Transactional(readOnly = true)
@@ -35,7 +39,7 @@ public class ClienteService {
         if (repository.existsByCpf(cpf)) {
             throw new CpfDuplicadoException();
         }
-        if (repository.existsByEmail(dados.email())) {
+        if (usuarioRepository.existsByEmail(dados.email())) {
             throw new EmailDuplicadoException();
         }
         Cliente cliente = new Cliente();
@@ -64,13 +68,6 @@ public class ClienteService {
         Cliente cliente = buscarEntidade(id);
         pedidoRepository.deleteByClienteId(id);
         repository.delete(cliente);
-    }
-
-    @Transactional(readOnly = true)
-    public Cliente autenticar(String email, String senha) {
-        return repository.findByEmail(email)
-                .filter(cliente -> cliente.getSenha().equals(senha))
-                .orElseThrow(CredenciaisInvalidasException::new);
     }
 
     private Cliente buscarEntidade(String id) {
@@ -104,9 +101,5 @@ public class ClienteService {
 
     public static class EmailDuplicadoException extends RuntimeException {
         public EmailDuplicadoException() { super("E-mail ja cadastrado"); }
-    }
-
-    public static class CredenciaisInvalidasException extends RuntimeException {
-        public CredenciaisInvalidasException() { super("E-mail ou senha invalidos"); }
     }
 }
