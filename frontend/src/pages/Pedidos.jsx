@@ -1,85 +1,96 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api.js'
+import PedidoForm from '../components/PedidoForm.jsx'
+import PedidoInfo from '../components/PedidoInfo.jsx'
 
-const MODALIDADES = { LOCACAO: 'Locação', ASSINATURA: 'Assinatura', LEASING: 'Leasing' }
-const STATUS = {
-  PENDENTE: 'Pendente',
-  AVALIADO_APROVADO: 'Aprovado',
-  AVALIADO_REPROVADO: 'Reprovado',
-  CANCELADO: 'Cancelado',
-}
-const VAZIO = { placa: '', ano: '', marca: '', modelo: '', modalidade: 'LOCACAO' }
-
-export default function Pedidos({ cliente }) {
+export default function Pedidos({ usuario }) {
   const [pedidos, setPedidos] = useState([])
-  const [form, setForm] = useState(VAZIO)
+  const [editando, setEditando] = useState(null)
   const [erro, setErro] = useState('')
 
   useEffect(() => {
-    api.listarPedidos(cliente.id).then(setPedidos).catch((e) => setErro(e.message))
-  }, [cliente.id])
+    api.listarPedidos(usuario.id).then(setPedidos).catch((e) => setErro(e.message))
+  }, [usuario.id])
 
-  const campo = (nome) => ({
-    value: form[nome],
-    onChange: (e) => setForm({ ...form, [nome]: e.target.value }),
-  })
+  const substituir = (atualizado) =>
+    setPedidos(pedidos.map((p) => (p.id === atualizado.id ? atualizado : p)))
 
-  async function enviar(event) {
-    event.preventDefault()
+  async function executar(acao, confirmacao) {
+    if (confirmacao && !window.confirm(confirmacao)) return
     setErro('')
     try {
-      const novo = await api.criarPedido(cliente.id, { ...form, ano: Number(form.ano) })
-      setPedidos([novo, ...pedidos])
-      setForm(VAZIO)
+      substituir(await acao())
     } catch (e) {
       setErro(e.message)
     }
   }
 
+  async function criar(dados) {
+    const novo = await api.criarPedido(usuario.id, dados)
+    setPedidos([novo, ...pedidos])
+  }
+
+  async function alterar(pedido, dados) {
+    substituir(await api.alterarPedido(usuario.id, pedido.id, dados))
+    setEditando(null)
+  }
+
+  function acoes(p) {
+    if (p.status === 'PENDENTE') {
+      return (
+        <div className="acoes">
+          <button className="secundario" onClick={() => setEditando(p.id)}>Alterar</button>
+          <button className="perigo" onClick={() =>
+            executar(() => api.cancelarPedido(usuario.id, p.id), 'Cancelar este pedido?')}>Cancelar</button>
+        </div>
+      )
+    }
+    if (p.status === 'AVALIADO_APROVADO' && p.contrato?.status === 'RASCUNHO') {
+      const semCredito = p.parecer.necessitaCredito && !p.contrato.credito
+      return (
+        <div className="acoes">
+          <button disabled={semCredito} onClick={() =>
+            executar(() => api.aceitarContrato(usuario.id, p.id), 'Aceitar o contrato?')}>Aceitar contrato</button>
+          <button className="perigo" onClick={() =>
+            executar(() => api.recusarContrato(usuario.id, p.id), 'Recusar o contrato? O pedido será cancelado.')}>
+            Recusar contrato
+          </button>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <>
-      <form className="card" onSubmit={enviar}>
-        <h2>Novo pedido de aluguel</h2>
-        <div className="grade">
-          <label>Placa<input {...campo('placa')} placeholder="ABC1D23" required /></label>
-          <label>Ano<input type="number" min="1900" {...campo('ano')} required /></label>
-          <label>Marca<input {...campo('marca')} required /></label>
-          <label>Modelo<input {...campo('modelo')} required /></label>
-        </div>
-        <label>Modalidade
-          <select {...campo('modalidade')}>
-            {Object.entries(MODALIDADES).map(([valor, rotulo]) => (
-              <option key={valor} value={valor}>{rotulo}</option>
-            ))}
-          </select>
-        </label>
-        {erro && <p className="erro">{erro}</p>}
-        <button type="submit">Criar pedido</button>
-      </form>
+      <section className="card">
+        <PedidoForm usuario={usuario} titulo="Novo pedido de aluguel" rotulo="Criar pedido" limpar onSubmit={criar} />
+      </section>
 
       <section className="card">
         <h2>Meus pedidos</h2>
+        {erro && <p className="erro">{erro}</p>}
         {pedidos.length === 0 ? (
           <p className="vazio">Nenhum pedido ainda.</p>
         ) : (
-          <div className="tabela">
-            <table>
-              <thead>
-                <tr><th>Data</th><th>Automóvel</th><th>Placa</th><th>Modalidade</th><th>Status</th></tr>
-              </thead>
-              <tbody>
-                {pedidos.map((p) => (
-                  <tr key={p.id}>
-                    <td>{new Date(p.dataPedido).toLocaleString('pt-BR')}</td>
-                    <td>{p.automovel.marca} {p.automovel.modelo} ({p.automovel.ano})</td>
-                    <td>{p.automovel.placa}</td>
-                    <td>{MODALIDADES[p.modalidade]}</td>
-                    <td><span className={`status ${p.status}`}>{STATUS[p.status]}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          pedidos.map((p) => (
+            <article className="pedido" key={p.id}>
+              {editando === p.id ? (
+                <PedidoForm
+                  usuario={usuario}
+                  rotulo="Salvar alterações"
+                  inicial={{ ...p.automovel, modalidade: p.modalidade }}
+                  onSubmit={(dados) => alterar(p, dados)}
+                  onCancelar={() => setEditando(null)}
+                />
+              ) : (
+                <>
+                  <PedidoInfo pedido={p} />
+                  {acoes(p)}
+                </>
+              )}
+            </article>
+          ))
         )}
       </section>
     </>
