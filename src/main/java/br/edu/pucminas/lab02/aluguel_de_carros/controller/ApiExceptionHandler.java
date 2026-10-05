@@ -39,7 +39,8 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({ClienteService.CpfDuplicadoException.class, ClienteService.EmailDuplicadoException.class,
-            PedidoAluguelService.AutomovelIndisponivelException.class})
+            PedidoAluguelService.AutomovelIndisponivelException.class,
+            PedidoAluguelService.OperacaoNaoPermitidaException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErroResponse conflito(RuntimeException exception) {
         return new ErroResponse(exception.getMessage());

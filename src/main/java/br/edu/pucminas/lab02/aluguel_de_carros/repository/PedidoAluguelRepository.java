@@ -12,4 +12,5 @@ public interface PedidoAluguelRepository extends JpaRepository<PedidoAluguel, St
     Optional<PedidoAluguel> findByIdAndClienteId(String id, String clienteId);
     void deleteByClienteId(String clienteId);
     boolean existsByAutomovelIdAndStatusIn(String automovelId, Collection<StatusPedido> status);
+    boolean existsByAutomovelIdAndStatusInAndIdNot(String automovelId, Collection<StatusPedido> status, String id);
 }
