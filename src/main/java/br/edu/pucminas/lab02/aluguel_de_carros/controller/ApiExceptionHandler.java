@@ -1,6 +1,7 @@
 package br.edu.pucminas.lab02.aluguel_de_carros.controller;
 
 import br.edu.pucminas.lab02.aluguel_de_carros.dto.ErroResponse;
+import br.edu.pucminas.lab02.aluguel_de_carros.service.AgenteService;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.AutenticacaoService;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.AvaliacaoService;
 import br.edu.pucminas.lab02.aluguel_de_carros.service.ClienteService;
@@ -40,6 +41,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler({ClienteService.CpfDuplicadoException.class, ClienteService.EmailDuplicadoException.class,
+            AgenteService.CnpjDuplicadoException.class,
             PedidoAluguelService.AutomovelIndisponivelException.class,
             PedidoAluguelService.OperacaoNaoPermitidaException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
