@@ -29,7 +29,7 @@ body { margin: 0; }
 .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
 
 label { display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; color: var(--suave); }
-input, select {
+input, select, textarea {
   font: inherit; color: var(--texto); padding: 8px 10px;
   border: 1px solid var(--borda); border-radius: 6px; background: #fff;
 }
@@ -39,6 +39,22 @@ button {
   background: var(--primaria); color: #fff; cursor: pointer;
 }
 button.link { background: none; color: var(--primaria); padding: 4px 8px; }
+button.secundario { background: #eaeef2; color: var(--texto); }
+button.perigo { background: var(--erro); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.formulario { display: flex; flex-direction: column; gap: 12px; }
+.formulario h2, .formulario h3 { margin: 0; }
+.acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.opcao { flex-direction: row; align-items: center; gap: 8px; }
+.opcao input { padding: 0; }
+
+.pedido { display: flex; flex-direction: column; gap: 8px; padding: 14px 0; border-top: 1px solid var(--borda); }
+.pedido-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pedido p { margin: 0; }
+.detalhes { background: var(--fundo); border-radius: 6px; padding: 10px 12px; font-size: 0.9rem; }
+.detalhes h3 { margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+.detalhes p { margin: 2px 0; }
 
 .erro { color: var(--erro); margin: 0; }
 .vazio { color: var(--suave); margin: 0; }
@@ -52,4 +68,6 @@ th { color: var(--suave); font-weight: 600; }
 .status.PENDENTE { background: #fff8c5; color: #7d4e00; }
 .status.AVALIADO_APROVADO { background: #dafbe1; color: #1a7f37; }
 .status.AVALIADO_REPROVADO { background: #ffebe9; color: #cf222e; }
-.status.CANCELADO { background: #eaeef2; color: #57606a; }
+.status.CANCELADO, .status.ENCERRADO { background: #eaeef2; color: #57606a; }
+.status.RASCUNHO { background: #fff8c5; color: #7d4e00; }
+.status.EM_EXECUCAO { background: #dafbe1; color: #1a7f37; }
